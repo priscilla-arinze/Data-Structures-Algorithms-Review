@@ -120,7 +120,6 @@ class LinkedList:
 
 
 
-
     ## Allows you to add new node with data, prepending to BEGINNING of list as new head element; O(1) time
     def prepend_item(self, data):
         new_node = Node(data)
@@ -255,7 +254,6 @@ class LinkedList:
                 previous = current
                 current = current.next_node # go to the next node in LinkedList
         return current
-
 
 
 
