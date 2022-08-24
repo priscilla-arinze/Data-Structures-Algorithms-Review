@@ -389,6 +389,62 @@ class BinarySearchTree:
         return max(leftside, rightside) + 1
 
 
+    # Will print out the nodes in each level from left to right
+    def printCurrentLevel(self, rootNode, level):
+        if rootNode is None:
+            return
+
+        # Each node will be treated as a root node (from left to right as the recursion functions show below)
+        # once the "root node" is reached and the level is set to 1, the node will print out
+        if level == 0:
+           print(rootNode.data, end = " ")
+
+        elif level > 0:
+            self.printCurrentLevel(rootNode.left, level-1)
+            self.printCurrentLevel(rootNode.right, level-1)
+
+
+    # For each level in a tree, this method executes printCurrentLevel()
+    def printLevelOrder(self, rootNode):
+        if self.is_empty() == True:
+            return "The tree is completely empty."
+
+        h = self.getHeight(self.getRoot())
+
+        # e.g. Root node is level 0, bottom most leaf nodes are level 3 (flipped compared to tree height)
+        # So range of 0 to 4(NON-INCLUSIVE)
+        for i in range(0, h+1):
+            # e.g. 4 levels; so root 10 will be passed in for each level: (10, 1), (10, 2), etc...
+            # Level number will count down as you go down the tree, level by level
+            self.printCurrentLevel(rootNode, i)
+
+    def BSTValidationUtil(self, rootNode, minValue, maxValue):
+        if rootNode == None:
+            return True
+
+        # maxValue is represented as positive infinity
+        # minValue is represented as negative infinity
+
+        # Using inifinity (- & +) as the min and max values respectively,
+            # 1st: make sure that the MAIN root node is GREATER than -infinity AND LESS than +infinity
+
+            # 2nd: recur the function and pass in the LEFT node as the root node, keeping minValue at -infinity & replacing maxValue with the previous root node
+                # SUMMARY: -infinity (don't replace) < LEFT (CURRENT) NODE < PREVIOUS ROOT NODE (change for each node as you traverse)
+                # Do this until you reach the base case (NULL left node), then move back up the tree
+            
+            # 3rd: Once finished with the left side of a node, pass in the RIGHT node as the root node, keeping maxValue at +infinity & replacing minValue with the previous root node 
+                # SUMMARY: PREVIOUS ROOT NODE (change for each node as you traverse) < RIGHT (CURRENT) NODE  < +infinity (don't replace)
+                # Do this until you reach the base case (NULL right node), then move back up the tree
+        if(rootNode.data > minValue and rootNode.data < maxValue 
+            and self.BSTValidationUtil(rootNode.left, minValue, rootNode.data) 
+            and self.BSTValidationUtil(rootNode.right, rootNode.data, maxValue)):
+            return True
+
+        else:
+            return False
+
+    def BSTValidation(self, rootNode):
+        return self.BSTValidationUtil(rootNode, float("-inf"), float("inf"))
 
 
 
@@ -406,4 +462,19 @@ tree1.insert(3)
 tree1.insert(25)
 
 
-print(tree1.getHeight(tree1.getNode(10)))
+invalidTree = BinarySearchTree()
+
+invalidTree.root = Node(10)
+invalidTree.root.left = Node(3)
+invalidTree.root.left.right = Node(11)
+invalidTree.root.right = Node(15)
+
+print(invalidTree.BSTValidation(invalidTree.root))
+#print(tree1.BSTValidation(tree1.getRoot()))
+
+
+#            10
+#         /      \
+#        3        15
+#       /
+#      4
